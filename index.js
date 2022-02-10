@@ -56,6 +56,39 @@ async function run() {
                 count,
             });
         });
+
+        // Getting single food...
+        app.get('/foods/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await foodCollection.findOne(query);
+            res.json(result);
+          });
+
+        //   Editing single food...
+          app.put('/foods/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedFood = req.body;
+      
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+              $set: {
+                foodName: updatedFood.fullName,
+                foodPrice: updatedFood.foodPrice,
+              },
+            };
+            const result = await foodCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+          });
+
+          // Deleting single food...
+        app.delete('/food/:id', async (req, res) => {
+            const stdId = req.params.id;
+            const query = { _id: ObjectId(stdId) };
+            const result = await foodCollection.deleteOne(query);
+            res.json(result);
+        });
         
         // Adding studens...
         app.post('/students', async(req, res) => {
